@@ -34,14 +34,14 @@ G_DECLARE_FINAL_TYPE(FlRendererWayland,
 FlRendererWayland* fl_renderer_wayland_new();
 
 /**
- * fl_renderer_wayland_set_xid:
+ * fl_renderer_wayland_set_window:
  * @renderer: an #FlRendererWayland.
- * @surface: the surface to render to.
+ * @window: the window to render to.
  *
- * Sets the wayland surface that is being rendered to.
+ * Sets the wayland window that is being rendered to.
  */
-void fl_renderer_wayland_set_surface(FlRendererWayland* self,
-                                     struct wl_surface* surface);
+void fl_renderer_wayland_set_window(FlRendererWayland* self,
+                                    struct wl_egl_window* surface);
 
 G_END_DECLS
 

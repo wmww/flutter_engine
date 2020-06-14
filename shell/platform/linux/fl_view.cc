@@ -17,6 +17,7 @@
 
 #include <gdk/gdkwayland.h>
 #include <gdk/gdkx.h>
+#include <wayland-egl.h>
 
 static constexpr int kMicrosecondsPerMillisecond = 1000;
 
@@ -40,6 +41,8 @@ struct _FlView {
   FlMouseCursorPlugin* mouse_cursor_plugin;
   FlPlatformPlugin* platform_plugin;
   FlTextInputPlugin* text_input_plugin;
+
+  wl_egl_window* wl_window;
 };
 
 enum { PROP_FLUTTER_PROJECT = 1, PROP_LAST };
@@ -215,6 +218,7 @@ static void fl_view_realize(GtkWidget* widget) {
 
   GdkWindowAttr window_attributes;
   window_attributes.window_type = GDK_WINDOW_CHILD;
+  window_attributes.window_type = GDK_WINDOW_SUBSURFACE;  // ???
   window_attributes.x = allocation.x;
   window_attributes.y = allocation.y;
   window_attributes.width = allocation.width;
@@ -232,18 +236,28 @@ static void fl_view_realize(GtkWidget* widget) {
   GdkWindow* window =
       gdk_window_new(gtk_widget_get_parent_window(widget), &window_attributes,
                      window_attributes_mask);
+  gdk_wayland_window_set_use_custom_surface(window);  // ???
   gtk_widget_register_window(widget, window);
   gtk_widget_set_window(widget, window);
 
   if (FL_IS_RENDERER_X11(self->renderer)) {
-    Window xid =
-        gdk_x11_window_get_xid(gtk_widget_get_window(GTK_WIDGET(self)));
+    Window xid = gdk_x11_window_get_xid(window);
     fl_renderer_x11_set_xid(FL_RENDERER_X11(self->renderer), xid);
   } else if (FL_IS_RENDERER_WAYLAND(self->renderer)) {
-    struct wl_surface* surface = gdk_wayland_window_get_wl_surface(
-        gtk_widget_get_window(GTK_WIDGET(self)));
-    fl_renderer_wayland_set_surface(FL_RENDERER_WAYLAND(self->renderer),
-                                    surface);
+    gdk_wayland_window_set_use_custom_surface(window);
+    struct wl_surface* surface = gdk_wayland_window_get_wl_surface(window);
+    int width = allocation.width;
+    int height = allocation.height;
+    if (width < 0 || height < 0) {
+       width = 1;
+       height = 1;
+    }
+    self->wl_window =
+        wl_egl_window_create(surface, width, height);
+    if (self->wl_window == EGL_NO_SURFACE)
+      g_error("Failed to create EGL window");
+    fl_renderer_wayland_set_window(FL_RENDERER_WAYLAND(self->renderer),
+                                   self->wl_window);
   }
 
   g_autoptr(GError) error = nullptr;
@@ -257,6 +271,11 @@ static void fl_view_size_allocate(GtkWidget* widget,
   FlView* self = FL_VIEW(widget);
 
   gtk_widget_set_allocation(widget, allocation);
+
+  if (self->wl_window != nullptr) {
+    wl_egl_window_resize(self->wl_window, allocation->width, allocation->height,
+                         0, 0);
+  }
 
   if (gtk_widget_get_realized(widget) && gtk_widget_get_has_window(widget)) {
     gdk_window_move_resize(gtk_widget_get_window(widget), allocation->x,

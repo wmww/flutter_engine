@@ -7,7 +7,7 @@
 struct _FlRendererWayland {
   FlRenderer parent_instance;
 
-  struct wl_surface* surface;
+  wl_egl_window* wl_window;
 };
 
 G_DEFINE_TYPE(FlRendererWayland, fl_renderer_wayland, fl_renderer_get_type())
@@ -17,7 +17,7 @@ static EGLSurface fl_renderer_wayland_create_surface(FlRenderer* renderer,
                                                      EGLConfig config) {
   FlRendererWayland* self = FL_RENDERER_WAYLAND(renderer);
   return eglCreateWindowSurface(
-      display, config, reinterpret_cast<EGLNativeWindowType>(self->surface),
+      display, config, reinterpret_cast<EGLNativeWindowType>(self->wl_window),
       nullptr);
 }
 
@@ -32,8 +32,8 @@ FlRendererWayland* fl_renderer_wayland_new() {
       g_object_new(fl_renderer_wayland_get_type(), nullptr));
 }
 
-void fl_renderer_wayland_set_surface(FlRendererWayland* self,
-                                     struct wl_surface* surface) {
+void fl_renderer_wayland_set_window(FlRendererWayland* self,
+                                    wl_egl_window* window) {
   g_return_if_fail(FL_IS_RENDERER_WAYLAND(self));
-  self->surface = surface;
+  self->wl_window = window;
 }
