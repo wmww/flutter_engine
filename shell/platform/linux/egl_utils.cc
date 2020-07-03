@@ -66,6 +66,7 @@ static gchar* egl_renderable_type_to_string(EGLint value) {
     g_ptr_array_add(strings, egl_hexadecimal_to_string(v));
   g_ptr_array_add(strings, nullptr);
 
+  g_warning("egl_renderable_type_to_string() leaked strings!\n");
   return g_strjoinv("|", reinterpret_cast<gchar**>(strings->pdata));
 }
 
@@ -83,6 +84,7 @@ static gchar* egl_surface_type_to_string(EGLint value) {
     g_ptr_array_add(strings, egl_hexadecimal_to_string(v));
   g_ptr_array_add(strings, nullptr);
 
+  g_warning("egl_surface_type_to_string() leaked strings!\n");
   return g_strjoinv("|", reinterpret_cast<gchar**>(strings->pdata));
 }
 
@@ -275,8 +277,10 @@ gchar* egl_config_to_string(EGLDisplay display, EGLConfig config) {
       value_string = egl_hexadecimal_to_string(value);
     g_ptr_array_add(
         strings, g_strdup_printf("%s=%s", config_items[i].name, value_string));
+    g_warning("egl_config_to_string() leaked value_string!\n");
   }
   g_ptr_array_add(strings, nullptr);
 
+  g_warning("egl_config_to_string() leaked strings!\n");
   return g_strjoinv(" ", reinterpret_cast<gchar**>(strings->pdata));
 }
