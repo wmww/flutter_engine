@@ -10,6 +10,15 @@ struct _FlRendererHeadless {
 
 G_DEFINE_TYPE(FlRendererHeadless, fl_renderer_headless, fl_renderer_get_type())
 
+
+// Implments FlRenderer::get_visual.
+static GdkVisual* fl_renderer_headless_get_visual(FlRenderer* renderer,
+                                                  GdkScreen* screen,
+                                                  EGLint visual_id) {
+    g_error("fl_renderer_headless_get_visual() not implemented");
+    return nullptr;
+}
+
 static EGLSurface fl_renderer_headless_create_surface(FlRenderer* renderer,
                                                       EGLDisplay display,
                                                       EGLConfig config) {
@@ -17,6 +26,7 @@ static EGLSurface fl_renderer_headless_create_surface(FlRenderer* renderer,
 }
 
 static void fl_renderer_headless_class_init(FlRendererHeadlessClass* klass) {
+  FL_RENDERER_CLASS(klass)->get_visual = fl_renderer_headless_get_visual;
   FL_RENDERER_CLASS(klass)->create_surface =
       fl_renderer_headless_create_surface;
 }
