@@ -25,7 +25,7 @@ struct _FlView {
   FlDartProject* project;
 
   // Rendering output.
-  FlRendererX11* renderer;
+  FlRenderer* renderer;
 
   // Engine running @project.
   FlEngine* engine;
@@ -127,7 +127,7 @@ static void fl_view_plugin_registry_iface_init(
 static void fl_view_constructed(GObject* object) {
   FlView* self = FL_VIEW(object);
 
-  self->renderer = fl_renderer_x11_new();
+  self->renderer = FL_RENDERER(fl_renderer_x11_new());
   self->engine = fl_engine_new(self->project, FL_RENDERER(self->renderer));
 
   // Create system channel handlers.
@@ -232,8 +232,8 @@ static void fl_view_realize(GtkWidget* widget) {
   gtk_widget_register_window(widget, window);
   gtk_widget_set_window(widget, window);
 
-  fl_renderer_x11_set_window(
-      self->renderer, GDK_X11_WINDOW(gtk_widget_get_window(GTK_WIDGET(self))));
+  fl_renderer_x11_set_window(FL_RENDERER_X11(self->renderer),
+                             GDK_X11_WINDOW(gtk_widget_get_window(GTK_WIDGET(self))));
 
   if (!fl_engine_start(self->engine, &error))
     g_warning("Failed to start Flutter engine: %s", error->message);
