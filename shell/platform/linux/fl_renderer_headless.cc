@@ -19,6 +19,11 @@ static GdkVisual* fl_renderer_headless_get_visual(FlRenderer* renderer,
     return nullptr;
 }
 
+// Implements FlRenderer::set_window
+static void fl_renderer_headless_set_window (FlRenderer* renderer,
+                                        GdkWindow* window) {
+}
+
 static EGLSurface fl_renderer_headless_create_surface(FlRenderer* renderer,
                                                       EGLDisplay display,
                                                       EGLConfig config) {
@@ -27,6 +32,7 @@ static EGLSurface fl_renderer_headless_create_surface(FlRenderer* renderer,
 
 static void fl_renderer_headless_class_init(FlRendererHeadlessClass* klass) {
   FL_RENDERER_CLASS(klass)->get_visual = fl_renderer_headless_get_visual;
+  FL_RENDERER_CLASS(klass)->set_window = fl_renderer_headless_set_window;
   FL_RENDERER_CLASS(klass)->create_surface =
       fl_renderer_headless_create_surface;
 }
