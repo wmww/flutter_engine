@@ -40,6 +40,10 @@ struct _FlRendererClass {
                            GdkScreen* screen,
                            EGLint visual_id);
 
+  // Virtual method called after a GDK window has been created
+  void (*set_window) (FlRenderer* renderer,
+                      GdkWindow* window);
+
   // Virtual method called when Flutter needs a surface to render to.
   EGLSurface (*create_surface)(FlRenderer* renderer,
                                EGLDisplay display,
@@ -72,6 +76,16 @@ gboolean fl_renderer_setup(FlRenderer* self, GError** error);
 GdkVisual* fl_renderer_get_visual(FlRenderer* self,
                                   GdkScreen* screen,
                                   GError** error);
+
+/**
+ * fl_renderer_set_window:
+ * @renderer: an #FlRenderer.
+ * @window: the GDK Window this renderer will render to
+ *
+ * Set the window this renderer will use
+ */
+void fl_renderer_set_window(FlRenderer* self,
+                            GdkWindow* window);
 
 /**
  * fl_renderer_start:
