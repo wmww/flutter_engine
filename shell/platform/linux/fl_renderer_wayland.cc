@@ -58,6 +58,15 @@ struct _FlRendererWayland {
 
 G_DEFINE_TYPE(FlRendererWayland, fl_renderer_wayland, fl_renderer_get_type())
 
+static void fl_renderer_wayland_dispose(GObject* object) {
+  FlRendererWayland* self = FL_RENDERER_WAYLAND(object);
+
+  if (self->toplevel_surface)
+    wl_surface_destroy(self->toplevel_surface);
+
+  G_OBJECT_CLASS(fl_renderer_wayland_parent_class)->dispose(object);
+}
+
 static void fl_renderer_wayland_set_window(FlRenderer* renderer,
                                            GdkWindow* window) {
     FlRendererWayland* self = FL_RENDERER_WAYLAND(renderer);
@@ -121,6 +130,7 @@ static EGLSurfacePair fl_renderer_wayland_create_surface(FlRenderer* renderer,
 }
 
 static void fl_renderer_wayland_class_init(FlRendererWaylandClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = fl_renderer_wayland_dispose;
   FL_RENDERER_CLASS(klass)->set_window = fl_renderer_wayland_set_window;
   FL_RENDERER_CLASS(klass)->create_display = fl_renderer_wayland_create_display;
   FL_RENDERER_CLASS(klass)->create_surface = fl_renderer_wayland_create_surface;
