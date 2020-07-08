@@ -37,6 +37,7 @@ struct _FlRendererClass {
 
   /**
    * Virtual method called to get the required visual
+   * Does not need to be implemented if the default visual will do
    */
   GdkVisual* (*get_visual)(FlRenderer* renderer,
                            GdkScreen* screen,
@@ -76,7 +77,7 @@ gboolean fl_renderer_setup(FlRenderer* self, GError** error);
  *
  * Gets the visual required to render on.
  *
- * Returns: a #GdkVisual.
+ * Returns: a #GdkVisual or nullptr if a specific visual is not required.
  */
 GdkVisual* fl_renderer_get_visual(FlRenderer* self, GdkScreen* screen);
 

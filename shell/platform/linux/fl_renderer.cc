@@ -109,8 +109,12 @@ GdkVisual* fl_renderer_get_visual(FlRenderer* self, GdkScreen* screen) {
   FlRendererPrivate* priv =
       static_cast<FlRendererPrivate*>(fl_renderer_get_instance_private(self));
 
-  return FL_RENDERER_GET_CLASS(self)->get_visual(
-      self, screen, priv->egl_display, priv->egl_config);
+  if (FL_RENDERER_GET_CLASS(self)->get_visual) {
+    return FL_RENDERER_GET_CLASS(self)->get_visual(
+        self, screen, priv->egl_display, priv->egl_config);
+  } else {
+    return nullptr;
+  }
 }
 
 void fl_renderer_set_window(FlRenderer* self, GdkWindow* window) {
