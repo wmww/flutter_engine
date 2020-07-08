@@ -217,7 +217,7 @@ static void fl_view_realize(GtkWidget* widget) {
   window_attributes.height = allocation.height;
   window_attributes.wclass = GDK_INPUT_OUTPUT;
   window_attributes.visual = fl_renderer_get_visual(
-      self->renderer, gtk_widget_get_screen(widget), nullptr);
+      self->renderer, gtk_widget_get_screen(widget));
   window_attributes.event_mask =
       gtk_widget_get_events(widget) | GDK_EXPOSURE_MASK |
       GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK |
