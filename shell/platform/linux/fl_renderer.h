@@ -75,44 +75,9 @@ struct _FlRendererClass {
 };
 
 /**
- * fl_renderer_setup:
- * @renderer: an #FlRenderer.
- * @error: (allow-none): #GError location to store the error occurring, or %NULL
- * to ignore.
- *
- * Set up the renderer.
- *
- * Returns: %TRUE if successfully setup.
- */
-gboolean fl_renderer_setup(FlRenderer* self, GError** error);
-
-/**
- * fl_renderer_get_visual:
- * @renderer: an #FlRenderer.
- * @screen: the screen being rendered on.
- * @error: (allow-none): #GError location to store the error occurring, or %NULL
- * to ignore.
- *
- * Gets the visual required to render on.
- *
- * Returns: a #GdkVisual.
- */
-GdkVisual* fl_renderer_get_visual(FlRenderer* self,
-                                  GdkScreen* screen,
-                                  GError** error);
-
-/**
- * fl_renderer_set_window:
- * @renderer: an #FlRenderer.
- * @window: the GDK Window this renderer will render to.
- *
- * Set the window this renderer will use.
- */
-void fl_renderer_set_window(FlRenderer* self, GdkWindow* window);
-
-/**
  * fl_renderer_start:
  * @renderer: an #FlRenderer.
+ * @widget: the application's main GTK widget.
  * @error: (allow-none): #GError location to store the error occurring, or %NULL
  * to ignore.
  *
@@ -120,7 +85,7 @@ void fl_renderer_set_window(FlRenderer* self, GdkWindow* window);
  *
  * Returns: %TRUE if successfully started.
  */
-gboolean fl_renderer_start(FlRenderer* self, GError** error);
+gboolean fl_renderer_start(FlRenderer* self, GtkWidget* widget, GError** error);
 
 /**
  * fl_renderer_set_geometry:
